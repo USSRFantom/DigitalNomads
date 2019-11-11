@@ -9,7 +9,7 @@ public class Notes {
     private String publishedAt; //дата создания статьи
 
     //Конструктор
-    public Notes(String author, String title, String description, String url, String urlToImage, String publishedAt) {
+    public Notes(String author, String title, String description, String  url, String urlToImage, String publishedAt) {
         this.author = author;
         this.title = title;
         this.description = description;

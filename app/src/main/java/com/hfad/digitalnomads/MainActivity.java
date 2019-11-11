@@ -1,6 +1,8 @@
 package com.hfad.digitalnomads;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -16,12 +18,21 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+
+    private RecyclerView recyclerViewNotes;
+    private NotesAdapter notesAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
+        recyclerViewNotes = findViewById(R.id.recyclerViewNotes);
+        recyclerViewNotes.setLayoutManager(new GridLayoutManager(this, 1));
+        notesAdapter = new NotesAdapter();
+        JSONObject jsonObject = NetworkUtils.getJSONFromNetwork(1);
+        ArrayList<Notes> notes = JSONUtils.getNotesFromJSON(jsonObject);
+        notesAdapter.setNotes(notes);
+        recyclerViewNotes.setAdapter(notesAdapter);
 
 
 
