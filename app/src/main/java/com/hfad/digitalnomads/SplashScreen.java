@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
-public class SplashScreen extends Activity {
-    private final int SPLASH_SCREEN = 5000; //5 секунд
+public class SplashScreen extends Activity {    //класс предназначенный для стартовой картинки, перед запуском программы
+    private final int SPLASH_SCREEN = 5000; //5 секунд  //переменная отвечающая за продолжительность показа времени нашей стартовой картинки
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
