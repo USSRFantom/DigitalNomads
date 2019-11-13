@@ -1,6 +1,12 @@
 package com.hfad.digitalnomads.dataBase;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "notes")
 public class Notes {
+    @PrimaryKey
+    private int ID;
     private String author; //Автор статьи
     private String title;  //Заголовок статьи
     private String description; // Краткое Описание статьи
@@ -8,14 +14,24 @@ public class Notes {
     private String urlToImage; //ссылка на картинку статьи
     private String publishedAt; //дата создания статьи
 
+
     //Конструктор
-    public Notes(String author, String title, String description, String  url, String urlToImage, String publishedAt) {
+    public Notes(int ID, String author, String title, String description, String  url, String urlToImage, String publishedAt) {
+        this.ID = ID;
         this.author = author;
         this.title = title;
         this.description = description;
         this.url = url;
         this.urlToImage = urlToImage;
         this.publishedAt = publishedAt;
+    }
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
     }
 
 

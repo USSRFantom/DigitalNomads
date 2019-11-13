@@ -8,20 +8,40 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Entity;
 
 import com.hfad.digitalnomads.dataBase.Notes;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHolder>{
 
-    private ArrayList<Notes> notes;
+    private List<Notes> notes;
+    private OnPosterClickListener onPosterClickListener;
+    private OnReachEndListener onReachEndListener;
 
     public  NotesAdapter(){
         notes = new ArrayList<>();
     }
 
+
+    interface OnPosterClickListener {
+        void  onPosterClick(int position);
+    }
+
+    interface OnReachEndListener {
+        void onReachEnd();
+    }
+
+    public void setOnPosterClickListener(OnPosterClickListener onPosterClickListener) {
+        this.onPosterClickListener = onPosterClickListener;
+    }
+
+    public void setOnReachEndListener(OnReachEndListener onReachEndListener) {
+        this.onReachEndListener = onReachEndListener;
+    }
 
     @NonNull
     @Override
@@ -32,6 +52,10 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
 
     @Override
     public void onBindViewHolder(@NonNull NotesViewHolder notesViewHolder, int i) {
+        if (i > notes.size() - 4 && onReachEndListener != null){
+            onReachEndListener.onReachEnd();
+        }
+
         Notes note = notes.get(i);
         notesViewHolder.textViewAuthor.setText(note.getAuthor());
         notesViewHolder.textViewTitle.setText(note.getTitle());
@@ -47,7 +71,6 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
     }
 
     class NotesViewHolder extends RecyclerView.ViewHolder{
-
         private ImageView imageViewNotes;
         private TextView textViewAuthor;
         private TextView textViewTitle;
@@ -64,21 +87,29 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
             textViewTitle = itemView.findViewById(R.id.textViewTitle);
             textViewDescription = itemView.findViewById(R.id.textViewDescription);
             textViewPublishedAt = itemView.findViewById(R.id.textViewPublishedAt);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (onPosterClickListener != null) {
+                        onPosterClickListener.onPosterClick(getAdapterPosition());
+                    }
+                }
+            });
         }
     }
 
 
-    public void setNotes(ArrayList<Notes> notes) {
+    public void setNotes(List<Notes> notes) {
         this.notes = notes;
         notifyDataSetChanged();
     }
 
-    public void addNotes(ArrayList<Notes> notes){
+    public void addNotes(List<Notes> notes){
         this.notes.addAll(notes);
         notifyDataSetChanged();
     }
 
-    public ArrayList<Notes> getNotes() {
+    public List<Notes> getNotes() {
         return notes;
     }
 }
