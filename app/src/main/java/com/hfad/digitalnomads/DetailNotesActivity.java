@@ -17,10 +17,10 @@ import com.squareup.picasso.Picasso;
 
 public class DetailNotesActivity extends AppCompatActivity {
 
-    private ImageView imageViewBigPoster;  //картинка
-    private TextView textViewOriginalAuthor; //автор
-    private TextView textViewOriginalPublishedAt;   //Дата публикации
-    private TextView textViewOriginalDescriptionFull; //Полное описание
+    private ImageView imageViewBigPoster;
+    private TextView textViewOriginalAuthor;
+    private TextView textViewOriginalPublishedAt;
+    private TextView textViewOriginalDescriptionFull;
     private Button buttonClick;
     String url;
 

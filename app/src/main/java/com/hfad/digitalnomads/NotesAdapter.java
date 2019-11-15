@@ -98,6 +98,11 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         }
     }
 
+    public void clear() {
+        this.notes.clear();
+        notifyDataSetChanged();
+    }
+
 
     public void setNotes(List<Notes> notes) {
         this.notes = notes;

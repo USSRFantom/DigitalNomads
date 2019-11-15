@@ -7,18 +7,17 @@ import androidx.room.PrimaryKey;
 public class Notes {
     @PrimaryKey
     private int ID;
-    private String author; //Автор статьи
-    private String title;  //Заголовок статьи
-    private String description; // Краткое Описание статьи
-    private String url; //ссылка на статью
-    private String urlToImage; //ссылка на картинку статьи
-    private String publishedAt; //дата создания статьи
+    private String author;
+    private String title;
+    private String description;
+    private String url;
+    private String urlToImage;
+    private String publishedAt;
 
 
 
 
 
-    //Конструктор
     public Notes(int ID, String author, String title, String description, String  url, String urlToImage, String publishedAt) {
         this.ID = ID;
         this.author = author;
@@ -30,7 +29,7 @@ public class Notes {
 
     }
 
-    //геттеры и сеттеры для каждого поля, чтобы использовать в базе даных
+
 
 
 

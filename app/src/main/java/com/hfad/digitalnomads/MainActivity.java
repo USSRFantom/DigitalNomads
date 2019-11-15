@@ -83,6 +83,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         notesFromLiveData.observe(this, new Observer<List<Notes>>() {
             @Override
             public void onChanged(List<Notes> notes) {
+                if (page == 1){
+                    notesAdapter.setNotes(notes);
+                }
             }
         });
 
@@ -118,6 +121,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoadFinished(@NonNull Loader<JSONObject> loader, JSONObject jsonObject) {
         ArrayList<Notes> notes = JSONUtils.getNotesFromJSON(jsonObject);
         if (notes != null && !notes.isEmpty()){
+            if (page == 1){
+                viewModel.deleteAllNotes();
+                notesAdapter.clear();;
+            }
             viewModel.deleteAllNotes();
             for (Notes notes1 : notes){
                 viewModel.insertNotes(notes1);
