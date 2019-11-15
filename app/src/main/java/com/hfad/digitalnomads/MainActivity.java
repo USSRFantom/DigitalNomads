@@ -1,14 +1,21 @@
 package com.hfad.digitalnomads;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.hfad.digitalnomads.dataBase.MainViewModel;
@@ -18,23 +25,31 @@ import com.hfad.digitalnomads.utils.NetworkUtils;
 
 import org.json.JSONObject;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<JSONObject> {
 
 
     private RecyclerView recyclerViewNotes;
     private NotesAdapter notesAdapter;
-
+    private ProgressBar progressBarLoading;
     private MainViewModel viewModel;
+
+    private static int LOADER_ID = 133;
+    private LoaderManager loaderManager;
+    private static int page = 1;
+    private static boolean isLoading = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        loaderManager = LoaderManager.getInstance(this);
         viewModel = ViewModelProviders.of(this ).get(MainViewModel.class);
         recyclerViewNotes = findViewById(R.id.recyclerViewNotes);
+        progressBarLoading = findViewById(R.id.progressBarLoading);
         recyclerViewNotes.setLayoutManager(new GridLayoutManager(this, 1));
         notesAdapter = new NotesAdapter();
         recyclerViewNotes.setAdapter(notesAdapter);
@@ -44,17 +59,23 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
         notesAdapter.setOnPosterClickListener(new NotesAdapter.OnPosterClickListener() {
             @Override
             public void onPosterClick(int position) {
-                Toast.makeText(MainActivity.this, "Clicked " + position, Toast.LENGTH_SHORT).show();
+                Notes notes = notesAdapter.getNotes().get(position);
+                Intent intent = new Intent(MainActivity.this, DetailNotesActivity.class);
+                intent.putExtra("id", notes.getID());
+                startActivity(intent);
             }
         });
 
         notesAdapter.setOnReachEndListener(new NotesAdapter.OnReachEndListener() {
             @Override
             public void onReachEnd() {
-                Toast.makeText(MainActivity.this, "конец списка", Toast.LENGTH_SHORT).show();
+                if (! isLoading) {
+                 downloadData(page);
+                }
             }
         });
 
@@ -62,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
         notesFromLiveData.observe(this, new Observer<List<Notes>>() {
             @Override
             public void onChanged(List<Notes> notes) {
-                notesAdapter.setNotes(notes);
             }
         });
 
@@ -74,14 +94,45 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void downloadData(int page){
-        JSONObject jsonObject = NetworkUtils.getJSONFromNetwork(1);
+        URL url = NetworkUtils.buildURL(page);
+        Bundle bundle = new Bundle();
+        bundle.putString("url", url.toString());
+        loaderManager.restartLoader(LOADER_ID, bundle, this);
+    }
+
+    @NonNull
+    @Override
+    public Loader<JSONObject> onCreateLoader(int id, @Nullable Bundle bundle) {
+        NetworkUtils.JSONloader jsonLoader = new NetworkUtils.JSONloader(this, bundle);
+        jsonLoader.setOnStartLoadingListener(new NetworkUtils.JSONloader.OnStartLoadingListener() {
+            @Override
+            public void onStartLoading() {
+                progressBarLoading.setVisibility(View.VISIBLE);
+                isLoading = true;
+            }
+        });
+        return jsonLoader;
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<JSONObject> loader, JSONObject jsonObject) {
         ArrayList<Notes> notes = JSONUtils.getNotesFromJSON(jsonObject);
         if (notes != null && !notes.isEmpty()){
             viewModel.deleteAllNotes();
             for (Notes notes1 : notes){
-                viewModel.insertNotes(notes1);  //???????????
+                viewModel.insertNotes(notes1);
             }
+            notesAdapter.addNotes(notes);
+            page++;
         }
+        isLoading = false;
+        progressBarLoading.setVisibility(View.INVISIBLE);
+        loaderManager.destroyLoader(LOADER_ID);
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<JSONObject> loader) {
+
     }
 }
 
@@ -116,13 +167,7 @@ Toast.makeText(this, "Успешно", Toast.LENGTH_SHORT).show();
 
 3.
 проверяем полученые данные (заголовки
-JSONObject jsonObject = NetworkUtils.getJSONFromNetwork(2);
-ArrayList<Notes> notes = JSONUtils.getNotesFromJSON(jsonObject);
-StringBuilder builder = new StringBuilder();
-for (Notes note : notes){
-builder.append(note.getTitle()).append("\n");
-}
-Log.i("MyResult", builder.toString());
+
 
 
 

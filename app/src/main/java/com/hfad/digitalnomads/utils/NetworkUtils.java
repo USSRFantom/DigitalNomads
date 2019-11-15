@@ -1,7 +1,13 @@
 package com.hfad.digitalnomads.utils;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.loader.content.AsyncTaskLoader;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,7 +30,7 @@ public class NetworkUtils {
 
 
     //метод для создания нашего запроса
-    private static URL buildURL (int page){
+    public static URL buildURL (int page){
         URL result = null; //создаем наш запрос  с нуливым значением
 
         Uri uri = Uri.parse(BASE_URL).buildUpon()  //создаем uri и передаем базовый урл. то есть поулчили строку в виде адреса к которому будем прикреплять параметр страницы
@@ -56,6 +62,80 @@ public class NetworkUtils {
     }
 
 
+
+    public static class JSONloader extends AsyncTaskLoader<JSONObject>{
+
+        private Bundle bundle;
+        private OnStartLoadingListener onStartLoadingListener;
+
+        public interface OnStartLoadingListener {
+            void onStartLoading();
+        }
+
+        public void setOnStartLoadingListener(OnStartLoadingListener onStartLoadingListener) {
+            this.onStartLoadingListener = onStartLoadingListener;
+        }
+
+        public JSONloader(@NonNull Context context, Bundle bundle) {
+            super(context);
+            this.bundle = bundle;
+        }
+
+        @Override
+        protected void onStartLoading() {
+            super.onStartLoading();
+            if (onStartLoadingListener != null){
+                onStartLoadingListener.onStartLoading();
+            }
+            forceLoad();
+        }
+
+        @Nullable
+        @Override
+        public JSONObject loadInBackground() {
+            if (bundle == null){
+                return null;
+            }
+            String urlAsString = bundle.getString("url");
+            URL url = null;
+            try {
+                url = new URL(urlAsString);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            JSONObject result = null;
+            if (url == null) { //Проверка
+                return result;
+            }
+            HttpsURLConnection connection = null; //создаем соединение
+            try {
+                connection = (HttpsURLConnection) url.openConnection(); //открываем соединение
+                InputStream inputStream = connection.getInputStream(); //создаем поток ввода
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream); //чтение строки
+                BufferedReader reader = new BufferedReader(inputStreamReader); //читаем сразу строками
+                StringBuilder builder = new StringBuilder(); //сюда сохраняем полученную строку
+                String line = reader.readLine();  //читаем данные
+                while (line != null){
+                    builder.append(line);
+                    line = reader.readLine();
+
+                }
+                result = new JSONObject(builder.toString());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } finally {
+                if (connection != null){ //проверка на соединение
+                    connection.disconnect(); //закрытие соединения
+                }
+            }
+
+
+            return result;
+        }
+    }
 
 
 

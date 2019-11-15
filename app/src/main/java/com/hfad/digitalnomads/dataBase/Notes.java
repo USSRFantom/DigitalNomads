@@ -15,6 +15,9 @@ public class Notes {
     private String publishedAt; //дата создания статьи
 
 
+
+
+
     //Конструктор
     public Notes(int ID, String author, String title, String description, String  url, String urlToImage, String publishedAt) {
         this.ID = ID;
@@ -24,7 +27,12 @@ public class Notes {
         this.url = url;
         this.urlToImage = urlToImage;
         this.publishedAt = publishedAt;
+
     }
+
+    //геттеры и сеттеры для каждого поля, чтобы использовать в базе даных
+
+
 
     public int getID() {
         return ID;
@@ -35,7 +43,6 @@ public class Notes {
     }
 
 
-    //геттеры и сеттеры для каждого поля, чтобы использовать в базе даных
     public String getAuthor() {
         return author;
     }

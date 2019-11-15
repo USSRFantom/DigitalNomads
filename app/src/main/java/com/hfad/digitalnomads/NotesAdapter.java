@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Entity;
 
 import com.hfad.digitalnomads.dataBase.Notes;
 import com.squareup.picasso.Picasso;
@@ -52,7 +51,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
 
     @Override
     public void onBindViewHolder(@NonNull NotesViewHolder notesViewHolder, int i) {
-        if (i > notes.size() - 4 && onReachEndListener != null){
+        if (notes.size() >= 20 && i > notes.size() - 4 && onReachEndListener != null){
             onReachEndListener.onReachEnd();
         }
 
@@ -62,6 +61,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         notesViewHolder.textViewDescription.setText(note.getDescription());
         notesViewHolder.textViewPublishedAt.setText(note.getPublishedAt());
         Picasso.get().load(note.getUrlToImage()).into(notesViewHolder.imageViewNotes);
+
 
     }
 
@@ -83,7 +83,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         public NotesViewHolder(@NonNull View itemView) {
             super(itemView);
             imageViewNotes = itemView.findViewById(R.id.imageViewNotes);
-            textViewAuthor = itemView.findViewById(R.id.textViewAuthor);
+            textViewAuthor = itemView.findViewById(R.id.textViewOriginalAuthor);
             textViewTitle = itemView.findViewById(R.id.textViewTitle);
             textViewDescription = itemView.findViewById(R.id.textViewDescription);
             textViewPublishedAt = itemView.findViewById(R.id.textViewPublishedAt);

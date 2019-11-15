@@ -35,7 +35,6 @@ public class JSONUtils { //класс для преобразования JSON �
             String url = objectNotes.getString(KEY_URL); //получаем ссылку на статью
             String urlToImage = objectNotes.getString(KEY_URL_TO_IMAGE); //получаем ссылку на картинку
             String publishedAt = objectNotes.getString(KEY_PIBLISHED_AT); //получаем дату публикации
-
                 Notes notes = new Notes(ID, author, title, description, url, urlToImage, publishedAt); //добавляем в обьект автора, заголовок, описание, ссылку на статью. ссылку на картинку, дату публикации
                 result.add(notes); //полученый фильм добавляем в массив
 
